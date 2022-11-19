@@ -1,4 +1,4 @@
-name: GitHub Actions NTSL
+name: GitHub Actions MUSICFY
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [push]
 jobs:

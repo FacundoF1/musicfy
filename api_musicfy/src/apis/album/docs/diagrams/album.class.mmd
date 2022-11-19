@@ -1,0 +1,15 @@
+classDiagram
+    Artist "1" --o "*" Album : artistId
+
+    class Artist{
+        -String id
+        +String name
+    }
+    class Album{ 
+        -String id
+        -String artistId
+        +String name
+        +String year
+        +String url
+    }
+            
