@@ -1,7 +1,7 @@
 import { userDao } from './album.dao';
 
 export default {
-  async getUsers(page: any, limit: any) {
+  async getAlbums(page: any, limit: any) {
     try {
       const response = await userDao.getAlls(page, limit);
       return response;
@@ -10,7 +10,7 @@ export default {
     }
   },
 
-  async getUser(data: any) {
+  async getAlbum(data: any) {
     try {
       const response = await userDao.get(data);
       return response;
@@ -19,7 +19,7 @@ export default {
     }
   },
 
-  async getUserForId(id: any) {
+  async getAlbumForId(id: any) {
     try {
       const response = await userDao.get(id);
       return response;
@@ -28,7 +28,7 @@ export default {
     }
   },
 
-  async createUser(user: any) {
+  async createAlbum(user: any) {
     try {
       const response = await userDao.create(user);
       return response;
@@ -37,7 +37,7 @@ export default {
     }
   },
 
-  async updateUser(
+  async updateAlbum(
     id: string | number,
     { email, username }: { email: string | number; username: string | number }
   ) {
@@ -49,7 +49,7 @@ export default {
     }
   },
 
-  async deleteUser(id: any) {
+  async deleteAlbum(id: any) {
     try {
       const response = await userDao.delete(id);
       return response;

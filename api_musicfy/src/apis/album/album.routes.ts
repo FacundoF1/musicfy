@@ -4,26 +4,26 @@ const router = express.Router();
 
 // @Modules
 import {
-  UpdateUser,
-  GetUser,
-  GetUsers,
-  GetUserBy,
-  CreateUser,
-  DeleteUser
+  UpdateAlbum,
+  GetAlbum,
+  GetAlbums,
+  GetAlbumBy,
+  CreateAlbum,
+  DeleteAlbum
 } from './album.controller';
 
-const deleteUserController = async (req: Request, res: Response, next: any) =>
-  await new DeleteUser(req, res, next).handleRequest();
-const createUserController = async (req: Request, res: Response, next: any) =>
-  await new CreateUser(req, res, next).handleRequest();
-const updateUserController = async (req: Request, res: Response, next: any) =>
-  await new UpdateUser(req, res, next).handleRequest();
-const getUserController = async (req: Request, res: Response, next: any) =>
-  await new GetUser(req, res, next).handleRequest();
-const getUsersController = async (req: Request, res: Response, next: any) =>
-  await new GetUsers(req, res, next).handleRequest();
-const getUserByController = async (req: Request, res: Response, next: any) =>
-  await new GetUserBy(req, res, next).handleRequest();
+const deleteAlbumController = async (req: Request, res: Response, next: any) =>
+  await new DeleteAlbum(req, res, next).handleRequest();
+const createAlbumController = async (req: Request, res: Response, next: any) =>
+  await new CreateAlbum(req, res, next).handleRequest();
+const updateAlbumController = async (req: Request, res: Response, next: any) =>
+  await new UpdateAlbum(req, res, next).handleRequest();
+const getAlbumController = async (req: Request, res: Response, next: any) =>
+  await new GetAlbum(req, res, next).handleRequest();
+const getAlbumsController = async (req: Request, res: Response, next: any) =>
+  await new GetAlbums(req, res, next).handleRequest();
+const getAlbumByController = async (req: Request, res: Response, next: any) =>
+  await new GetAlbumBy(req, res, next).handleRequest();
 
 /**
  * @swagger
@@ -44,7 +44,7 @@ const getUserByController = async (req: Request, res: Response, next: any) =>
  *          500:
  *             description: Error en el servidor
  */
-router.get('/', getUsersController);
+router.get('/', getAlbumsController);
 
 /**
  * @swagger
@@ -65,7 +65,7 @@ router.get('/', getUsersController);
  *          500:
  *             description: Error en el servidor
  */
-router.get('/:id', getUserController);
+router.get('/:id', getAlbumController);
 
 /**
  * @swagger
@@ -92,7 +92,7 @@ router.get('/:id', getUserController);
  *          500:
  *             description: Error en el servidor
  */
-router.post('/', createUserController);
+router.post('/', createAlbumController);
 
 /**
  * @swagger
@@ -119,7 +119,7 @@ router.post('/', createUserController);
  *          500:
  *             description: Error en el servidor
  */
-router.get('/:email', getUserByController);
+router.get('/:name', getAlbumByController);
 
 /**
  * @swagger
@@ -146,7 +146,7 @@ router.get('/:email', getUserByController);
  *          500:
  *             description: Error en el servidor
  */
-router.patch('/:id', updateUserController);
+router.patch('/:id', updateAlbumController);
 
 /**
  * @swagger
@@ -173,6 +173,6 @@ router.patch('/:id', updateUserController);
  *          500:
  *             description: Error en el servidor
  */
-router.delete('/:id', deleteUserController);
+router.delete('/:id', deleteAlbumController);
 
 export default router;

@@ -1,15 +1,16 @@
-import userModel from './album.model';
-import userDto from './album.dto';
+import albumModel from './album.model';
 import { Request, Response } from 'express';
 import { systemDecorator } from '../../decorators';
-import { Handler } from './album.interface';
+import { createAlbumDto } from './album.dto';
 const { countInstances } = systemDecorator;
 
 import { errors } from '@errors';
-const createError = errors(':: UserController ::');
+const createError = errors(':: AlbumController ::');
+
+import { readFileStream } from '@middlewares/streams/readFile';
 
 @countInstances
-class CreateUser implements Handler {
+class CreateAlbum {
   private _req: Request;
   private _res: Response;
   private _next: any;
@@ -21,27 +22,18 @@ class CreateUser implements Handler {
   }
 
   async handleRequest() {
-    const {
-      body: { username, password, email }
-    } = this._req;
+    const { body } = this._req;
 
-    if (!username || !password || !email)
-      return this._res.sendStatus(400).end();
+    const data = createAlbumDto(body);
 
-    // lack validate type de carateres body
+    await albumModel.createAlbum(data);
 
-    const users = await userModel.createUser({
-      username,
-      password,
-      email
-    });
-
-    return this._res.send(userDto.single(users)).end();
+    return this._res.status(201).end();
   }
 }
 
 @countInstances
-class GetUsers implements Handler {
+class GetAlbums {
   private _req: Request;
   private _res: Response;
   private _next: any;
@@ -62,9 +54,9 @@ class GetUsers implements Handler {
       const res_page = parseInt((page || 0).toString(), 10);
       const res_limit = parseInt((limit || 10).toString(), 10);
 
-      const users = await userModel.getUsers(res_page, res_limit);
+      const users = await albumModel.getAlbums(res_page, res_limit);
 
-      return this._res.json(userDto.multiple(users));
+      return this._res.json(users);
     } catch (error) {
       this._next(error);
     }
@@ -72,7 +64,7 @@ class GetUsers implements Handler {
 }
 
 @countInstances
-class GetUser {
+class GetAlbum {
   private _req: Request;
   private _res: Response;
   private _next: any;
@@ -86,15 +78,22 @@ class GetUser {
   async handleRequest() {
     // lack validate type de carateres query
     try {
-      const {
-        params: { id },
-        body
-      } = this._req;
-      const user = await userModel.getUserForId(id);
-      if (!user) throw new createError.DataNotFound({ name: 'User' });
+      // const {
+      //   params: { id },
+      //   body
+      // } = this._req;
+      // const user = await albumModel.getAlbumForId(id);
+      // if (!user) throw new createError.DataNotFound({ name: 'Album' });
 
-      const response = userDto.single(user);
-      return this._res.send(response).end();
+      // const response = userDto.single(user);
+      const range = this._req?.headers?.range;
+      const response: { headers; fnReadStream } = await readFileStream(
+        `${__dirname}/files/test.mp4`,
+        range
+      );
+
+      this._res.writeHead(206, response.headers);
+      response.fnReadStream.pipe(this._res);
     } catch (error) {
       this._next(error);
     } finally {
@@ -104,7 +103,7 @@ class GetUser {
 }
 
 @countInstances
-class GetUserBy {
+class GetAlbumBy {
   private _req: Request;
   private _res: Response;
   private _next: any;
@@ -119,8 +118,7 @@ class GetUserBy {
     try {
       // lack validate type de carateres query
       const { params } = this._req;
-      const user = await userModel.getUser({ ...params });
-      if (!user) return this._res.sendStatus(404);
+      const user = await albumModel.getAlbum({ ...params });
 
       return this._res.json(user).end();
     } catch (error) {
@@ -132,7 +130,7 @@ class GetUserBy {
 }
 
 @countInstances
-class DeleteUser implements Handler {
+class DeleteAlbum {
   private _req: Request;
   private _res: Response;
   private _next: any;
@@ -144,19 +142,21 @@ class DeleteUser implements Handler {
   }
 
   async handleRequest() {
-    const {
-      params: { id }
-    } = this._req;
+    try {
+      const {
+        params: { id }
+      } = this._req;
 
-    const result = await userModel.deleteUser(id);
-    const status = !result ? 404 : 204;
-
-    return this._res.sendStatus(status).end();
+      const result = await albumModel.deleteAlbum(id);
+      return this._res.sendStatus(204).end();
+    } catch (error) {
+      this._next(error);
+    }
   }
 }
 
 @countInstances
-class UpdateUser {
+class UpdateAlbum {
   private _req: Request;
   private _res: Response;
   private _next: any;
@@ -168,23 +168,33 @@ class UpdateUser {
   }
 
   async handleRequest() {
-    const {
-      body: { username, email },
-      params: { id }
-    } = this._req;
+    try {
+      const {
+        body: { username, email },
+        params: { id }
+      } = this._req;
 
-    if (!username || !email) return this._res.sendStatus(400).end();
+      if (!username || !email) return this._res.sendStatus(400).end();
 
-    const user = await userModel.getUser(id);
-    if (!user) return this._res.sendStatus(404).end();
+      await albumModel.getAlbum(id);
 
-    await userModel.updateUser(id, {
-      username: username,
-      email: email
-    });
+      await albumModel.updateAlbum(id, {
+        username: username,
+        email: email
+      });
 
-    return this._res.sendStatus(204).end();
+      return this._res.sendStatus(204).end();
+    } catch (error) {
+      this._next(error);
+    }
   }
 }
 
-export { CreateUser, DeleteUser, GetUser, GetUserBy, GetUsers, UpdateUser };
+export {
+  CreateAlbum,
+  DeleteAlbum,
+  GetAlbum,
+  GetAlbumBy,
+  GetAlbums,
+  UpdateAlbum
+};

@@ -1,14 +1,14 @@
 import { ConnectionNeDB } from '@services/storages/NeDb/index';
 import { DBAccessModel } from '@services/storages/NeDb/nedb.interface';
 import { errors } from '@errors';
-const createError = errors(':: NeDB DAO ::');
+const createError = errors(':: Album DAO ::');
 
 class ConnectionNeDBDao {
   private collection: any;
 
   constructor() {
     this.collection = new ConnectionNeDB(
-      DBAccessModel['user']
+      DBAccessModel['album']
     ).connectionNeDB();
   }
 
@@ -35,7 +35,7 @@ class ConnectionNeDBDao {
           const error = new createError.DataNotFound({});
           return reject(err || error);
         }
-        return resolve(docs);
+        return resolve(docs[0]);
       })
     );
   };
@@ -47,7 +47,7 @@ class ConnectionNeDBDao {
           const error = new createError.DataNotFound({});
           return reject(err || error);
         }
-        return resolve(docs);
+        return resolve(docs[0]);
       })
     );
   };
@@ -59,7 +59,7 @@ class ConnectionNeDBDao {
           const error = new createError.CreateError({});
           return reject(err || error);
         }
-        return resolve(docs);
+        return resolve(docs[0]);
       })
     );
   };
@@ -74,7 +74,7 @@ class ConnectionNeDBDao {
           const error = new createError.UpdateError({});
           return reject(err || error);
         }
-        return resolve(docs);
+        return resolve(docs[0]);
       })
     );
   };
@@ -86,7 +86,7 @@ class ConnectionNeDBDao {
           const error = new createError.DeleteError({});
           return reject(err || error);
         }
-        return resolve(docs);
+        return resolve(docs[0]);
       })
     );
   };
