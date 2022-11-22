@@ -3,9 +3,9 @@ import { errorCodes, errors } from '@utils/errors.common';
 const createError = errors(':: Album Model ::');
 
 export default {
-  async getAlbums<T>(page: any, limit: any): Promise<T> {
+  async getAlbums<T>(page: any, limit: any, filter): Promise<T> {
     try {
-      const response: T = await albumDao.getAlls<T>(page, limit);
+      const response: T = await albumDao.getAlls<T>(page, limit, filter);
       return response;
     } catch (error) {
       throw error;
@@ -43,15 +43,6 @@ export default {
     }
   },
 
-  async getAlbumForId<T>(id: string): Promise<T> {
-    try {
-      const response: T = await albumDao.get<T>(id);
-      return response[0];
-    } catch (error) {
-      throw error;
-    }
-  },
-
   async createAlbum<T>(data: any): Promise<T> {
     try {
       const response: T = await albumDao.create<T>(data);
@@ -70,9 +61,9 @@ export default {
     }
   },
 
-  async deleteAlbum<T>(id: any): Promise<T> {
+  async deleteAlbum<T>(_id: any): Promise<void> {
     try {
-      const response: T = await albumDao.delete<T>(id);
+      const response: void = await albumDao.delete<T>(_id);
       return response;
     } catch (error) {
       throw error;
