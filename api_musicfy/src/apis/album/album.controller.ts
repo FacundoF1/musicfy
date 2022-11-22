@@ -38,7 +38,8 @@ class CreateAlbum {
 
       await albumModel.getAlbumForCreation({
         artistId: body.artistId,
-        name: body.name
+        name: body.name,
+        status: 'active'
       });
 
       await albumModel.createAlbum<AlbumInterface>({ ...data });
@@ -63,14 +64,18 @@ class GetAlbums {
 
   async handleRequest() {
     try {
-      const {
-        query: { page, limit }
-      } = this._req;
+      const { query } = this._req;
+      const { page, limit } = query;
 
-      const res_page = parseInt((page || 0).toString(), 10);
-      const res_limit = parseInt((limit || 3).toString(), 10);
+      const res_page = Number(page) || 0;
+      const res_limit = Number(limit) || 3;
 
-      const albums = await albumModel.getAlbums(res_page, res_limit);
+      const filterAlbum = albumDto(query, false);
+      const filters = Object.keys(filterAlbum).length
+        ? filterAlbum
+        : { status: 'active' };
+
+      const albums = await albumModel.getAlbums(res_page, res_limit, filters);
       const response = albumsDto(albums);
 
       return this._res.send(response);
@@ -95,7 +100,7 @@ class GetAlbumBy {
     try {
       const { params, query } = this._req;
 
-      const data = albumDto({ ...params, ...query }, false);
+      const data = albumDto({ status: 'active', ...params, ...query }, false);
       const result = await albumModel.getAlbum<AlbumInterface>(data);
 
       if (!result) throw new createError.DataNotFound({ name: 'Album' });
@@ -116,7 +121,6 @@ class GetAlbumBy {
     }
   }
 }
-
 @countInstances
 class DeleteAlbum {
   private _req: Request;
@@ -132,11 +136,12 @@ class DeleteAlbum {
   async handleRequest() {
     try {
       const {
-        params: { id }
+        params: { _id }
       } = this._req;
 
-      const result = await albumModel.deleteAlbum(id);
-      return this._res.sendStatus(204).end();
+      await albumModel.updateAlbum({ _id }, { status: 'inactive' });
+
+      return this._res.status(204).end();
     } catch (error) {
       this._next(error);
     }

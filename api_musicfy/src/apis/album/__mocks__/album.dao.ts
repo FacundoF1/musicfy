@@ -1,6 +1,17 @@
+import { errors } from '@utils/errors.common';
+const createError = errors(':: Album DAO ::');
 class ConnectionNeDBDao {
   getAlls = async <T>(page: any, limit: any) => {
-    return null;
+    return page === 0
+      ? [
+          {
+            name: 'sin igual',
+            year: '2023',
+            url: 'http://www.google.com',
+            _id: 'testDb'
+          }
+        ]
+      : null;
   };
 
   getById = async <T>(id: any) => {
@@ -8,7 +19,7 @@ class ConnectionNeDBDao {
   };
 
   get = async <T>(data: any) => {
-    if (data.status === 'active' && data.artistId === 'test.Forbidden') {
+    if (data?.status === 'active' && data?.artistId === 'test.Forbidden') {
       return [
         {
           name: 'test.Forbidden',
@@ -23,7 +34,7 @@ class ConnectionNeDBDao {
         }
       ];
     }
-    if (data._id === 'testDb') {
+    if (data?._id === 'testDb') {
       return [
         {
           name: 'sin igual',
@@ -37,22 +48,25 @@ class ConnectionNeDBDao {
   };
 
   create = async <T>(data: any) => {
-    return data.id ? true : false;
+    return data?._id ? true : null;
   };
 
   update = async <T>(dataDb: any, data?: object | any) => {
-    return dataDb._id === 'testDb'
-      ? [
-          {
-            name: 'sin iguals',
-            year: 2028,
-            url: 'http://www.google.com',
-            artistId: 'acc-12345675',
-            status: 'active',
-            _id: '5edbFYN5Q5kXdZlW'
-          }
-        ]
-      : null;
+    if (dataDb?._id === 'testDb')
+      return [
+        {
+          name: 'sin iguals',
+          year: 2028,
+          url: 'http://www.google.com',
+          artistId: 'acc-12345675',
+          status: 'active',
+          _id: '5edbFYN5Q5kXdZlW'
+        }
+      ];
+    if (dataDb?._id === 'errorTest')
+      throw new createError.DeleteError({ detail: 'Album' });
+
+    return null;
   };
 
   delete = async <T>(id: any) => {

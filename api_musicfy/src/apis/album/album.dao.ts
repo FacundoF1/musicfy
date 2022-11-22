@@ -12,15 +12,15 @@ class ConnectionNeDBDao {
     ).connectionNeDB();
   }
 
-  getAlls = async <T>(page: any, limit: any): Promise<T> => {
+  getAlls = async <T>(page: any, limit: any, filter): Promise<T> => {
     return new Promise((resolve, reject) =>
       this.collection
-        .find({})
+        .find(filter)
         .skip(page * limit)
         .limit(limit)
         .exec((err: any, docs: any) => {
-          if (err || docs.length === 0) {
-            const error = new createError.DataNotFound({});
+          if (err || !docs || docs.length === 0) {
+            const error = new createError.DataNotFound({ name: 'Album' });
             return reject(err || error);
           }
           return resolve(docs);
@@ -66,24 +66,29 @@ class ConnectionNeDBDao {
 
   update = async <T>(data, dataDb): Promise<T> => {
     return new Promise((resolve, reject) =>
-      this.collection.update(data, { $set: dataDb }, (err: any, docs: any) => {
-        if (err || docs.length === 0) {
-          const error = new createError.UpdateError({});
-          return reject(err || error);
+      this.collection.update(
+        data,
+        { $set: dataDb },
+        {},
+        (err: any, docs: any) => {
+          if (err || docs.length === 0) {
+            const error = new createError.UpdateError({});
+            return reject(err || error);
+          }
+          return resolve(docs[0]);
         }
-        return resolve(docs[0]);
-      })
+      )
     );
   };
 
-  delete = async <T>(id: any): Promise<T> => {
+  delete = async <T>(_id: any): Promise<void> => {
     return new Promise((resolve, reject) =>
-      this.collection.remove({ _id: id }, (err: any, docs: any) => {
-        if (err || docs.length === 0) {
-          const error = new createError.DeleteError({});
+      this.collection.remove({ _id }, (err: any, docs: any) => {
+        if (err || !docs || docs.length === 0) {
+          const error = new createError.DeleteError({ detail: 'Album' });
           return reject(err || error);
         }
-        return resolve(docs[0]);
+        return resolve();
       })
     );
   };

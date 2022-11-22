@@ -3,7 +3,8 @@ import { app } from '@app';
 
 import { TestTool } from '@utils/index';
 import albumDao from './album.dao';
-import { CreateAlbum, GetAlbumBy } from './album.controller';
+import albumModel from './album.model';
+import { CreateAlbum, DeleteAlbum, GetAlbumBy } from './album.controller';
 import { errors } from '@utils/errors.common';
 const createError = errors(':: Utils Validators ::');
 
@@ -20,7 +21,7 @@ describe('Album', () => {
 
   describe('Create', () => {
     test('Unit: db create', async () => {
-      const result = await albumDao.create({ id: 1 });
+      const result = await albumDao.create({ _id: 1 });
 
       expect(result).toEqual(true);
     });
@@ -148,6 +149,38 @@ describe('Album', () => {
     });
   });
 
+  describe('Read All', () => {
+    test('Unit: db getAll', async () => {
+      const result = await albumDao.getAlls(0, 3, {});
+
+      expect(result).toEqual([
+        {
+          name: 'sin igual',
+          year: '2023',
+          url: 'http://www.google.com',
+          _id: 'testDb'
+        }
+      ]);
+    });
+
+    test('200: get albums', async () => {
+      const response = await request(app).get(`/albums`).expect(200);
+
+      expect(response).toHaveProperty('body', [
+        {
+          name: 'sin igual',
+          year: '2023',
+          url: 'http://www.google.com',
+          _id: 'testDb'
+        }
+      ]);
+    });
+
+    test('500: get albums. Return error server', async () => {
+      await request(app).get(`/albums?page=1`).expect(500);
+    });
+  });
+
   describe('Update', () => {
     test('Unit: db update', async () => {
       const result = await albumDao.update({ _id: 'testDb' }, { year: 2028 });
@@ -183,6 +216,63 @@ describe('Album', () => {
           year: 2028
         })
         .expect(400);
+    });
+  });
+
+  describe('Delete', () => {
+    test('Unit: db update', async () => {
+      const result = await albumDao.update(
+        { _id: 'testDbdelete' },
+        { status: 'inactive' }
+      );
+
+      expect(result).toEqual(null);
+    });
+
+    test('204: delete album', async () => {
+      const response = await request(app)
+        .delete(`/albums/5edbFYN5Q5kXdZlW`)
+        .expect(204);
+
+      expect(response).toHaveProperty('body');
+    });
+
+    test('404: delete album', async () => {
+      const req = testTool.mockRequest({}, {}, { _id: 'errorTest' });
+      const res = testTool.mockResponse();
+      const next = testTool.mockNext(
+        new createError.DeleteError({ detail: 'Album' })
+      );
+
+      await new DeleteAlbum(req, res, next).handleRequest();
+
+      const error = new createError.DeleteError({ detail: 'Album' });
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe('Album Model', () => {
+    test('getAlbums', async () => {
+      const getAlbums = await albumModel.getAlbums(1, 1, {});
+      expect(getAlbums).toBe(null);
+    });
+
+    test('getAlbum', async () => {
+      const getAlbum = await albumModel.getAlbum('data');
+      expect(getAlbum).toBe(null);
+    });
+    test('createAlbum', async () => {
+      const createAlbum = await albumModel.createAlbum('data');
+      expect(createAlbum).toBe(null);
+    });
+    test('updateAlbum', async () => {
+      const updateAlbum = await albumModel.updateAlbum('id', {});
+      expect(updateAlbum).toBe(null);
+    });
+    test('deleteAlbum', async () => {
+      const deleteAlbum = await albumModel.deleteAlbum('id');
+      expect(deleteAlbum).toBe(null);
     });
   });
 });

@@ -15,7 +15,7 @@ export default {
     }
   },
 
-  async getAlbumForId<T>(id: string) {
+  async createAlbum<T>(data: any) {
     try {
       return null;
     } catch (error) {
@@ -23,18 +23,7 @@ export default {
     }
   },
 
-  async createAlbum<T>(data: any) {
-    try {
-      return false;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  async updateAlbum<T>(
-    id: string | number,
-    { email, username }: { email: string | number; username: string | number }
-  ) {
+  async updateAlbum<T>(id: string | number, {}) {
     try {
       return null;
     } catch (error) {
