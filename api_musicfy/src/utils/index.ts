@@ -1,12 +1,4 @@
-const validateAttr = (key, value, obj = {}) => {
-  if (![undefined, 'undefined', 'null', 'false', ''].includes(value)) {
-    obj[key] = value;
-  }
+import { validateAttr, required } from './validators';
+import TestTool from './testTools';
 
-  return {
-    validateAttr: (k, v) => validateAttr(k, v, obj),
-    toObject: () => obj
-  };
-};
-
-export { validateAttr };
+export { validateAttr, required, TestTool };

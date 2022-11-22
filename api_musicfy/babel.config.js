@@ -9,7 +9,7 @@ module.exports = {
       'module-resolver',
       {
         alias: {
-          '@apiServices': './src/apiServices',
+          '@apis': './src/apis',
           '@decorators': './src/decorators',
           '@middlewares': './src/middlewares',
           '@routes': './src/routes',
