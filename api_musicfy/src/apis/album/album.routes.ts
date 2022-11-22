@@ -11,11 +11,10 @@ import {
   DeleteAlbum
 } from './album.controller';
 
-import upload from '@middlewares/streams/writeFile';
-
 import {
-  bodyCreateAlbumValidator,
-  createAlbumValidators
+  validator,
+  bodyCreateValidator,
+  bodyUpdateValidator
 } from './album.validator';
 
 const deleteAlbumController = async (req: Request, res: Response, next: any) =>
@@ -75,13 +74,7 @@ router.get('/', getAlbumsController);
  *          500:
  *             description: Error en el servidor
  */
-router.post(
-  '/',
-  upload.single('recfile'),
-  ...bodyCreateAlbumValidator,
-  createAlbumValidators,
-  createAlbumController
-);
+router.post('/', validator.body(bodyCreateValidator), createAlbumController);
 
 /**
  * @swagger
@@ -135,7 +128,7 @@ router.get('/:_id?', getAlbumByController);
  *          500:
  *             description: Error en el servidor
  */
-router.patch('/:_id', updateAlbumController);
+router.put('/', validator.body(bodyUpdateValidator), updateAlbumController);
 
 /**
  * @swagger

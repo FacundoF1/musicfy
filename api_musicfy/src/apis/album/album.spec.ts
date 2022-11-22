@@ -25,7 +25,7 @@ describe('Album', () => {
       expect(result).toEqual(true);
     });
 
-    test('201: create album. without content', async () => {
+    test('201: create album. Return without content', async () => {
       const req = testTool.mockRequest({
         name: 'resource',
         year: 'resource',
@@ -37,6 +37,29 @@ describe('Album', () => {
       await new CreateAlbum(req, res, testTool.mockNext(null)).handleRequest();
 
       expect(res.status).toHaveBeenCalledWith(201);
+    });
+
+    test('201: post album. Return without content', async () => {
+      const response = await request(app)
+        .post(`/albums`)
+        .send({
+          name: 'resource',
+          year: 2022,
+          url: 'resource',
+          artistId: 'resource'
+        })
+        .expect(201);
+    });
+
+    test('400: post album. Validators return error', async () => {
+      const response = await request(app)
+        .post(`/albums`)
+        .send({
+          name: 'resource',
+          year: 'resource',
+          url: 'resource'
+        })
+        .expect(400);
     });
 
     test('400: create album. Return error DataRequired', async () => {
@@ -122,6 +145,44 @@ describe('Album', () => {
         name: 'Album'
       });
       expect(next).toHaveBeenCalledWith(error);
+    });
+  });
+
+  describe('Update', () => {
+    test('Unit: db update', async () => {
+      const result = await albumDao.update({ _id: 'testDb' }, { year: 2028 });
+
+      expect(result).toEqual([
+        {
+          name: 'sin iguals',
+          year: 2028,
+          url: 'http://www.google.com',
+          artistId: 'acc-12345675',
+          status: 'active',
+          _id: '5edbFYN5Q5kXdZlW'
+        }
+      ]);
+    });
+
+    test('200: update album', async () => {
+      const response = await request(app)
+        .put(`/albums`)
+        .send({
+          year: 2028,
+          _id: '5edbFYN5Q5kXdZlW'
+        })
+        .expect(204);
+
+      expect(response).toHaveProperty('body');
+    });
+
+    test('400: update album', async () => {
+      const response = await request(app)
+        .put(`/albums`)
+        .send({
+          year: 2028
+        })
+        .expect(400);
     });
   });
 });

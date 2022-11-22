@@ -61,12 +61,9 @@ export default {
     }
   },
 
-  async updateAlbum<T>(
-    id: string | number,
-    { email, username }: { email: string | number; username: string | number }
-  ): Promise<T> {
+  async updateAlbum<T>(data, dataDb): Promise<T> {
     try {
-      const response: T = await albumDao.update<T>(id, { email, username });
+      const response: T = await albumDao.update<T>(data, dataDb);
       return response;
     } catch (error) {
       throw error;
