@@ -4,7 +4,7 @@
 import albumModel from './album.model';
 import { Request, Response } from 'express';
 import { systemDecorator } from '../../decorators';
-import { albumDto } from './album.dto';
+import { albumDto, albumsDto } from './album.dto';
 const { countInstances } = systemDecorator;
 
 import { errors } from '@utils/errors.common';
@@ -72,55 +72,17 @@ class GetAlbums {
       } = this._req;
 
       const res_page = parseInt((page || 0).toString(), 10);
-      const res_limit = parseInt((limit || 10).toString(), 10);
+      const res_limit = parseInt((limit || 3).toString(), 10);
 
-      const users = await albumModel.getAlbums(res_page, res_limit);
+      const albums = await albumModel.getAlbums(res_page, res_limit);
+      const response = albumsDto(albums);
 
-      return this._res.json(users);
+      return this._res.send(response);
     } catch (error) {
       this._next(error);
     }
   }
 }
-
-@countInstances
-class GetAlbum {
-  private _req: Request;
-  private _res: Response;
-  private _next: any;
-
-  constructor(req: Request, res: Response, next) {
-    this._req = req;
-    this._res = res;
-    this._next = next;
-  }
-
-  async handleRequest() {
-    // lack validate type de carateres query
-    try {
-      const {
-        params: { id }
-      } = this._req;
-
-      const result: AlbumInterface = await albumModel.getAlbumForId(id);
-      const album = albumDto(result);
-
-      const range = this._req?.headers?.range;
-      const response: { headers; fnReadStream } = await readFileStream(
-        `${__dirname}/files/test.mp4`,
-        range
-      );
-
-      this._res.writeHead(206, response.headers);
-      response.fnReadStream.pipe(this._res);
-    } catch (error) {
-      this._next(error);
-    } finally {
-      // METRICS
-    }
-  }
-}
-
 @countInstances
 class GetAlbumBy {
   private _req: Request;
@@ -135,17 +97,26 @@ class GetAlbumBy {
 
   async handleRequest() {
     try {
-      // lack validate type de carateres query
       const { params, query } = this._req;
 
-      const data = { ...params, ...query };
-      const album = await albumModel.getAlbum(data);
+      const data = albumDto({ ...params, ...query }, false);
+      const result = await albumModel.getAlbum<AlbumInterface>(data);
 
-      return this._res.json(album).end();
+      if (!result) throw new createError.DataNotFound({ name: 'Album' });
+
+      const album = albumDto(
+        {
+          _id: result._id,
+          name: result.name,
+          url: result.url,
+          year: result.year
+        },
+        false
+      );
+
+      return this._res.send(album).end();
     } catch (error) {
       this._next(error);
-    } finally {
-      // METRICS
     }
   }
 }
@@ -211,40 +182,4 @@ class UpdateAlbum {
   }
 }
 
-class ExistAlbumController {
-  private _req: Request;
-  private _res: Response;
-  private _next: any;
-
-  constructor(req: Request, res: Response, next) {
-    this._req = req;
-    this._res = res;
-    this._next = next;
-  }
-
-  async handleRequest() {
-    try {
-      const { body } = this._req;
-      const response = await albumModel.getAlbum({
-        artistId: body.artistId,
-        name: body.name
-      });
-
-      if (response) throw new createError.Forbidden({ detail: 'Ready exist' });
-
-      this._next();
-    } catch (error) {
-      return this._next();
-    }
-  }
-}
-
-export {
-  CreateAlbum,
-  DeleteAlbum,
-  GetAlbum,
-  GetAlbumBy,
-  GetAlbums,
-  UpdateAlbum,
-  ExistAlbumController
-};
+export { CreateAlbum, DeleteAlbum, GetAlbumBy, GetAlbums, UpdateAlbum };

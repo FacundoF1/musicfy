@@ -5,7 +5,6 @@ const router = express.Router();
 // @Modules
 import {
   UpdateAlbum,
-  GetAlbum,
   GetAlbums,
   GetAlbumBy,
   CreateAlbum,
@@ -25,8 +24,6 @@ const createAlbumController = async (req: Request, res: Response, next: any) =>
   await new CreateAlbum(req, res, next).handleRequest();
 const updateAlbumController = async (req: Request, res: Response, next: any) =>
   await new UpdateAlbum(req, res, next).handleRequest();
-const getAlbumController = async (req: Request, res: Response, next: any) =>
-  await new GetAlbum(req, res, next).handleRequest();
 const getAlbumsController = async (req: Request, res: Response, next: any) =>
   await new GetAlbums(req, res, next).handleRequest();
 const getAlbumByController = async (req: Request, res: Response, next: any) =>
@@ -52,27 +49,6 @@ const getAlbumByController = async (req: Request, res: Response, next: any) =>
  *             description: Error en el servidor
  */
 router.get('/', getAlbumsController);
-
-/**
- * @swagger
- * paths:
- *  /stats:
- *    get:
- *      tags:
- *        - Mutants
- *      summary: Busqueda en base de datos.
- *      description: Exponer un servicio extra que devuelva un Json con las estadísticas de las verificaciones de ADN.
- *      produces:
- *          - application/json
- *      responses:
- *          200:
- *             description: Ok
- *             schema:
- *              $ref: '#/components/schemas/Stats'
- *          500:
- *             description: Error en el servidor
- */
-// router.get('/:id', getAlbumController);
 
 /**
  * @swagger

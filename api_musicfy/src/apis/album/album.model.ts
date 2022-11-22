@@ -15,7 +15,7 @@ export default {
   async getAlbum<T>(data: any): Promise<T> {
     try {
       const response: T = await albumDao.get<T>(data);
-      return response[0];
+      return response && response[0];
     } catch (error) {
       throw error;
     }
@@ -46,7 +46,7 @@ export default {
   async getAlbumForId<T>(id: string): Promise<T> {
     try {
       const response: T = await albumDao.get<T>(id);
-      return response;
+      return response[0];
     } catch (error) {
       throw error;
     }

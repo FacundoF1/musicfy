@@ -23,6 +23,16 @@ class ConnectionNeDBDao {
         }
       ];
     }
+    if (data._id === 'testDb') {
+      return [
+        {
+          name: 'sin igual',
+          year: '2023',
+          url: 'http://www.google.com',
+          _id: 'testDb'
+        }
+      ];
+    }
     return null;
   };
 

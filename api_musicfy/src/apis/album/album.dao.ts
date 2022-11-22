@@ -43,7 +43,7 @@ class ConnectionNeDBDao {
   get = async <T>(data: any): Promise<T> => {
     return new Promise((resolve, reject) =>
       this.collection.find(data, (err: any, docs: any) => {
-        if (err || docs.length === 0) {
+        if (err || !docs || docs.length === 0) {
           const error = new createError.DataNotFound({ name: 'Album' });
           return reject(err || error);
         }
