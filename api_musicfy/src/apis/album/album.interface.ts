@@ -7,10 +7,10 @@ interface AlbumInterface {
   name: string;
   year: string;
   url: string;
-  pathId: string;
-  artistId: string;
-  pathUrlAudio: string;
-  status: statusInterface;
+  pathId?: string;
+  artistId?: string;
+  pathUrlAudio?: string;
+  status?: statusInterface;
 }
 
 enum statusInterface {

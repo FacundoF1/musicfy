@@ -2,7 +2,10 @@
 import { required, validateAttr } from '@utils/index';
 import { AlbumInterface } from './album.interface';
 
-const albumDto = (resource: AlbumInterface): AlbumInterface => {
+const albumDto = (
+  resource: AlbumInterface | any,
+  isRequired = true
+): AlbumInterface => {
   const response: AlbumInterface | any = validateAttr('name', resource.name)
     .validateAttr('year', resource.year)
     .validateAttr('url', resource.url)
@@ -13,24 +16,27 @@ const albumDto = (resource: AlbumInterface): AlbumInterface => {
     .validateAttr('artistId', resource.artistId)
     .validateAttr('pathUrlAudio', resource.pathUrlAudio)
     .validateAttr('status', resource.status)
+    .validateAttr('_id', resource._id)
     .toObject();
 
-  required(
-    {
-      name: response.name,
-      year: response.year,
-      url: response.url,
-      pathId: response.pathId,
-      artistId: response.artistId,
-      pathUrlAudio: resource.pathUrlAudio,
-      status: resource.status
-    },
-    {},
-    'createAlbumReqDto',
-    'Album'
-  );
+  isRequired &&
+    required(
+      {
+        name: response.name,
+        year: response.year,
+        url: response.url
+      },
+      {},
+      'createAlbumReqDto',
+      'Album'
+    );
 
   return response;
 };
 
-export { albumDto };
+const albumsDto = (resources): [] =>
+  resources.map(({ name, year, url, _id }: AlbumInterface) =>
+    albumDto({ name, year, url, _id })
+  );
+
+export { albumDto, albumsDto };
