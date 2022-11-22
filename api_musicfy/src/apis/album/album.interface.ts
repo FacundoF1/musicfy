@@ -7,7 +7,15 @@ interface AlbumInterface {
   name: string;
   year: string;
   url: string;
-  pathUrlFs: string;
+  pathId: string;
+  artistId: string;
+  pathUrlAudio: string;
+  status: statusInterface;
+}
+
+enum statusInterface {
+  'active',
+  'inactive'
 }
 
 export { HandlerInterface, AlbumInterface };

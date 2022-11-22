@@ -1,2 +1,4 @@
 import { validateAttr, required } from './validators';
-export { validateAttr, required };
+import TestTool from './testTools';
+
+export { validateAttr, required, TestTool };

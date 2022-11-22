@@ -1,13 +1,17 @@
+// @Vendors
+
+// @Modules
 import albumModel from './album.model';
 import { Request, Response } from 'express';
 import { systemDecorator } from '../../decorators';
-import { createAlbumDto } from './album.dto';
+import { albumDto } from './album.dto';
 const { countInstances } = systemDecorator;
 
-import { errors } from '@errors';
+import { errors } from '@utils/errors.common';
 const createError = errors(':: AlbumController ::');
 
-import { readFileStream } from '@middlewares/streams/readFile';
+import { readFileStream, deleteFile } from '@middlewares/index';
+import { AlbumInterface } from './album.interface';
 
 @countInstances
 class CreateAlbum {
@@ -15,20 +19,37 @@ class CreateAlbum {
   private _res: Response;
   private _next: any;
 
-  constructor(req: Request, res: Response, next) {
+  constructor(req: Request, res: Response, next: any) {
     this._req = req;
     this._res = res;
     this._next = next;
   }
 
   async handleRequest() {
-    const { body } = this._req;
+    const { body, file } = this._req;
+    const pathId = file?.filename;
+    const pathUrlAudio = file?.path;
 
-    const data = createAlbumDto(body);
+    try {
+      const data = albumDto({
+        ...body,
+        pathId,
+        pathUrlAudio,
+        status: 'active'
+      });
 
-    await albumModel.createAlbum(data);
+      await albumModel.getAlbumForCreation({
+        artistId: body.artistId,
+        name: body.name
+      });
 
-    return this._res.status(201).end();
+      await albumModel.createAlbum<AlbumInterface>({ ...data });
+
+      return this._res.status(201).end();
+    } catch (error) {
+      deleteFile(pathUrlAudio);
+      this._next(error);
+    }
   }
 }
 
@@ -46,7 +67,6 @@ class GetAlbums {
 
   async handleRequest() {
     try {
-      // lack validate type de carateres query
       const {
         query: { page, limit }
       } = this._req;
@@ -78,14 +98,13 @@ class GetAlbum {
   async handleRequest() {
     // lack validate type de carateres query
     try {
-      // const {
-      //   params: { id },
-      //   body
-      // } = this._req;
-      // const user = await albumModel.getAlbumForId(id);
-      // if (!user) throw new createError.DataNotFound({ name: 'Album' });
+      const {
+        params: { id }
+      } = this._req;
 
-      // const response = userDto.single(user);
+      const result: AlbumInterface = await albumModel.getAlbumForId(id);
+      const album = albumDto(result);
+
       const range = this._req?.headers?.range;
       const response: { headers; fnReadStream } = await readFileStream(
         `${__dirname}/files/test.mp4`,
@@ -117,10 +136,12 @@ class GetAlbumBy {
   async handleRequest() {
     try {
       // lack validate type de carateres query
-      const { params } = this._req;
-      const user = await albumModel.getAlbum({ ...params });
+      const { params, query } = this._req;
 
-      return this._res.json(user).end();
+      const data = { ...params, ...query };
+      const album = await albumModel.getAlbum(data);
+
+      return this._res.json(album).end();
     } catch (error) {
       this._next(error);
     } finally {
@@ -190,11 +211,40 @@ class UpdateAlbum {
   }
 }
 
+class ExistAlbumController {
+  private _req: Request;
+  private _res: Response;
+  private _next: any;
+
+  constructor(req: Request, res: Response, next) {
+    this._req = req;
+    this._res = res;
+    this._next = next;
+  }
+
+  async handleRequest() {
+    try {
+      const { body } = this._req;
+      const response = await albumModel.getAlbum({
+        artistId: body.artistId,
+        name: body.name
+      });
+
+      if (response) throw new createError.Forbidden({ detail: 'Ready exist' });
+
+      this._next();
+    } catch (error) {
+      return this._next();
+    }
+  }
+}
+
 export {
   CreateAlbum,
   DeleteAlbum,
   GetAlbum,
   GetAlbumBy,
   GetAlbums,
-  UpdateAlbum
+  UpdateAlbum,
+  ExistAlbumController
 };

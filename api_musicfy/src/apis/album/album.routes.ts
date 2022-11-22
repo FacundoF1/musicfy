@@ -12,6 +12,13 @@ import {
   DeleteAlbum
 } from './album.controller';
 
+import upload from '@middlewares/streams/writeFile';
+
+import {
+  bodyCreateAlbumValidator,
+  createAlbumValidators
+} from './album.validator';
+
 const deleteAlbumController = async (req: Request, res: Response, next: any) =>
   await new DeleteAlbum(req, res, next).handleRequest();
 const createAlbumController = async (req: Request, res: Response, next: any) =>
@@ -65,7 +72,7 @@ router.get('/', getAlbumsController);
  *          500:
  *             description: Error en el servidor
  */
-router.get('/:id', getAlbumController);
+// router.get('/:id', getAlbumController);
 
 /**
  * @swagger
@@ -92,7 +99,13 @@ router.get('/:id', getAlbumController);
  *          500:
  *             description: Error en el servidor
  */
-router.post('/', createAlbumController);
+router.post(
+  '/',
+  upload.single('recfile'),
+  ...bodyCreateAlbumValidator,
+  createAlbumValidators,
+  createAlbumController
+);
 
 /**
  * @swagger
@@ -119,7 +132,7 @@ router.post('/', createAlbumController);
  *          500:
  *             description: Error en el servidor
  */
-router.get('/:name', getAlbumByController);
+router.get('/:_id?', getAlbumByController);
 
 /**
  * @swagger
@@ -146,7 +159,7 @@ router.get('/:name', getAlbumByController);
  *          500:
  *             description: Error en el servidor
  */
-router.patch('/:id', updateAlbumController);
+router.patch('/:_id', updateAlbumController);
 
 /**
  * @swagger
@@ -173,6 +186,6 @@ router.patch('/:id', updateAlbumController);
  *          500:
  *             description: Error en el servidor
  */
-router.delete('/:id', deleteAlbumController);
+router.delete('/:_id', deleteAlbumController);
 
 export default router;

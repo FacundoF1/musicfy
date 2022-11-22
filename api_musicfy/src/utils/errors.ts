@@ -72,17 +72,13 @@ class ApiError extends Error {
 
   static Helper =
     (module) =>
-    ({ message, statusCodeHttp, code }, ...args) => {
-      const getProps = ({
-        cause = '',
-        stackTrace = 'off',
-        ...tmpProps
-      } = {}) => {
-        const props = { module, message: '', ...tmpProps };
+    ({ message, statusCodeHttp, code }) => {
+      const getProps = ({ cause = ' ', ...tmpProps } = {}) => {
+        const props = { module, ...tmpProps };
         const isFunction = typeof message === 'function';
-        props.message = isFunction ? message(message) : message;
+        props['message'] = isFunction ? message(props) : message;
 
-        return [props, props.message, cause, ...args];
+        return [props, props['message'], cause];
       };
 
       /**
@@ -90,7 +86,9 @@ class ApiError extends Error {
        */
       class ApiErrorImpl extends ApiError {
         constructor(data) {
-          const [props, message, cause] = getProps(data);
+          const [props, ...args] = getProps(data);
+          const [message, cause] = args;
+          /* eslint-disable line*/
           super(message, cause);
 
           this.props = props;
@@ -217,7 +215,7 @@ const errors = (module) => {
 
     DataNotFound: createError({
       code: errorCodes.DATA_NOT_FOUND,
-      message: ({ name }) => `Not Found ${name}`,
+      message: ({ name }) => `Not Found ${print(name)}`,
       statusCodeHttp: 404
     }),
 
@@ -244,13 +242,13 @@ const errors = (module) => {
 
     Unauthorized: createError({
       code: errorCodes.SERVICE_UNAUTHORIZED,
-      message: ({ detail }) => `Unauthorized ${detail}`,
+      message: ({ detail }) => `Unauthorized ${print(detail)}`,
       statusCodeHttp: 401
     }),
 
     Forbidden: createError({
       code: errorCodes.SERVICE_FORBIDDEN,
-      message: ({ detail }) => `Forbidden${detail}`,
+      message: ({ detail }) => `Forbidden ${print(detail)}`,
       statusCodeHttp: 403
     }),
 
@@ -286,4 +284,4 @@ const errors = (module) => {
   };
 };
 
-export { errors, errorCodes, ApiError };
+export default ApiError;

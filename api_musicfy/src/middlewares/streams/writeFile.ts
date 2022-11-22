@@ -1,24 +1,38 @@
-import { createWriteStream } from 'fs';
-import { errors } from '@errors';
-const createError = errors(':: Middleware Stream ::');
+// @Vendors
+import { v4 as uuidv4 } from 'uuid';
+import multer from 'multer';
+import path from 'path';
+import { existsSync, mkdirSync } from 'fs';
+import { Extension } from './stream.dto';
 
-const writeFileStream = async (data, pathUrlFs) => {
-  const writeStream = createWriteStream(pathUrlFs);
+let pathFolderStorage = '';
 
-  writeStream.write(data);
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const {
+      body: { artistId },
+      baseUrl
+    } = req;
 
-  writeStream.end();
+    pathFolderStorage = `../../services/storages/files${baseUrl}`;
 
-  writeStream.on('error', (error) => {
-    throw new createError.ServiceError({ detail: 'Save file' });
-  });
+    const pathFile = path.join(__dirname, pathFolderStorage, `${artistId}/`);
 
-  const response = await writeStream.on('finish', async () => {
-    console.log('Finished writing');
-    return true;
-  });
+    if (!existsSync(pathFile)) mkdirSync(pathFile, { recursive: true });
 
-  return response;
-};
+    cb(null, pathFile);
+  },
+  filename: (req, file, cb) => {
+    const pathId = uuidv4();
+    const ext = new Extension().getExtension(file.mimetype);
+    cb(null, `${pathId}${ext}`);
+  }
+});
 
-export { writeFileStream };
+const upload = multer({
+  dest: path.join(__dirname, pathFolderStorage),
+  storage: storage,
+  limits: { fileSize: 1000000000 }
+});
+
+export default upload;

@@ -1,6 +1,6 @@
 import { ConnectionNeDB } from '@services/storages/NeDb/index';
 import { DBAccessModel } from '@services/storages/NeDb/nedb.interface';
-import { errors } from '@errors';
+import { errors } from '@utils/errors.common';
 const createError = errors(':: Album DAO ::');
 
 class ConnectionNeDBDao {
@@ -12,7 +12,7 @@ class ConnectionNeDBDao {
     ).connectionNeDB();
   }
 
-  getAlls = async (page: any, limit: any) => {
+  getAlls = async <T>(page: any, limit: any): Promise<T> => {
     return new Promise((resolve, reject) =>
       this.collection
         .find({})
@@ -28,7 +28,7 @@ class ConnectionNeDBDao {
     );
   };
 
-  getById = async (id: any): Promise<[]> => {
+  getById = async <T>(id: any): Promise<T> => {
     return new Promise((resolve, reject) =>
       this.collection.findOne({ _id: id }, (err: any, docs: any) => {
         if (err || docs.length === 0) {
@@ -40,19 +40,19 @@ class ConnectionNeDBDao {
     );
   };
 
-  get = async (data: any): Promise<[]> => {
+  get = async <T>(data: any): Promise<T> => {
     return new Promise((resolve, reject) =>
       this.collection.find(data, (err: any, docs: any) => {
         if (err || docs.length === 0) {
-          const error = new createError.DataNotFound({});
+          const error = new createError.DataNotFound({ name: 'Album' });
           return reject(err || error);
         }
-        return resolve(docs[0]);
+        return resolve(docs);
       })
     );
   };
 
-  create = async (data: any) => {
+  create = async <T>(data: any): Promise<T> => {
     return new Promise((resolve, reject) =>
       this.collection.insert(data, (err: any, docs: any) => {
         if (err || docs.length === 0) {
@@ -64,7 +64,7 @@ class ConnectionNeDBDao {
     );
   };
 
-  update = async (id: any, data?: object | any) => {
+  update = async <T>(id: any, data?: object | any): Promise<T> => {
     const { email, username } = data;
     const update = { $set: { email, username } };
 
@@ -79,7 +79,7 @@ class ConnectionNeDBDao {
     );
   };
 
-  delete = async (id: any) => {
+  delete = async <T>(id: any): Promise<T> => {
     return new Promise((resolve, reject) =>
       this.collection.remove({ _id: id }, (err: any, docs: any) => {
         if (err || docs.length === 0) {
@@ -92,6 +92,6 @@ class ConnectionNeDBDao {
   };
 }
 
-const userDao = new ConnectionNeDBDao();
+const albumDao = new ConnectionNeDBDao();
 
-export { userDao };
+export default albumDao;

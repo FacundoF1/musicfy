@@ -1,15 +1,20 @@
 classDiagram
     Artist "1" --o "*" Album : artistId
 
-    class Artist{
+    class Artist {
         -String id
         +String name
     }
-    class Album{ 
+    class Album { 
         -String id
-        -String artistId
+        -String pathId
+        -String pathUrlAudio
+        -Enum status
+        +String artistId
         +String name
         +String year
         +String url
+        -CreateAlbum()
+        -writeFileStream()
     }
             
