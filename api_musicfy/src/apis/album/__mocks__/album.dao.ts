@@ -40,8 +40,19 @@ class ConnectionNeDBDao {
     return data.id ? true : false;
   };
 
-  update = async <T>(id: any, data?: object | any) => {
-    return null;
+  update = async <T>(dataDb: any, data?: object | any) => {
+    return dataDb._id === 'testDb'
+      ? [
+          {
+            name: 'sin iguals',
+            year: 2028,
+            url: 'http://www.google.com',
+            artistId: 'acc-12345675',
+            status: 'active',
+            _id: '5edbFYN5Q5kXdZlW'
+          }
+        ]
+      : null;
   };
 
   delete = async <T>(id: any) => {

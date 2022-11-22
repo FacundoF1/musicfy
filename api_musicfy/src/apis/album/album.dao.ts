@@ -64,12 +64,9 @@ class ConnectionNeDBDao {
     );
   };
 
-  update = async <T>(id: any, data?: object | any): Promise<T> => {
-    const { email, username } = data;
-    const update = { $set: { email, username } };
-
+  update = async <T>(data, dataDb): Promise<T> => {
     return new Promise((resolve, reject) =>
-      this.collection.update({ _id: id }, update, {}, (err: any, docs: any) => {
+      this.collection.update(data, { $set: dataDb }, (err: any, docs: any) => {
         if (err || docs.length === 0) {
           const error = new createError.UpdateError({});
           return reject(err || error);

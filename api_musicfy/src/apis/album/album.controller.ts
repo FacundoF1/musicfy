@@ -9,8 +9,6 @@ const { countInstances } = systemDecorator;
 
 import { errors } from '@utils/errors.common';
 const createError = errors(':: AlbumController ::');
-
-import { readFileStream, deleteFile } from '@middlewares/index';
 import { AlbumInterface } from './album.interface';
 
 @countInstances
@@ -47,12 +45,10 @@ class CreateAlbum {
 
       return this._res.status(201).end();
     } catch (error) {
-      deleteFile(pathUrlAudio);
       this._next(error);
     }
   }
 }
-
 @countInstances
 class GetAlbums {
   private _req: Request;
@@ -146,7 +142,6 @@ class DeleteAlbum {
     }
   }
 }
-
 @countInstances
 class UpdateAlbum {
   private _req: Request;
@@ -161,19 +156,19 @@ class UpdateAlbum {
 
   async handleRequest() {
     try {
-      const {
-        body: { username, email },
-        params: { id }
-      } = this._req;
+      const { body } = this._req;
 
-      if (!username || !email) return this._res.sendStatus(400).end();
+      const newData = albumDto(
+        {
+          _id: body._id,
+          name: body.name,
+          year: body.year,
+          url: body.url
+        },
+        false
+      );
 
-      await albumModel.getAlbum(id);
-
-      await albumModel.updateAlbum(id, {
-        username: username,
-        email: email
-      });
+      await albumModel.updateAlbum({ _id: body._id }, newData);
 
       return this._res.sendStatus(204).end();
     } catch (error) {

@@ -5,7 +5,7 @@ interface HandlerInterface {
 interface AlbumInterface {
   _id?: string;
   name: string;
-  year: string;
+  year: number;
   url: string;
   pathId?: string;
   artistId?: string;

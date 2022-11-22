@@ -1,20 +1,28 @@
-import { Request, Response } from 'express';
-import { body, validationResult } from 'express-validator';
+import * as Joi from 'joi';
+import {
+  ContainerTypes,
+  // Use this as a replacement for express.Request
+  ValidatedRequest,
+  // Extend from this to define a valid schema type/interface
+  ValidatedRequestSchema,
+  // Creates a validator that generates middlewares
+  createValidator
+} from 'express-joi-validation';
 
-const bodyCreateAlbumValidator = [
-  body('artistId').isString().isLength({ min: 5 }),
-  body('name').isString().isLength({ min: 5 }),
-  body('year').isString().isLength({ min: 4 }),
-  body('url').isString().isLength({ min: 5 })
-];
+const validator = createValidator();
 
-const createAlbumValidators = (req: Request, res: Response, next: any) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
+const bodyCreateValidator = Joi.object({
+  artistId: Joi.string().min(5).required(),
+  name: Joi.string().min(3).required(),
+  year: Joi.number().min(4).required(),
+  url: Joi.string().min(3).required()
+});
 
-  next();
-};
+const bodyUpdateValidator = Joi.object({
+  _id: Joi.string().min(5).required(),
+  name: Joi.string().min(3),
+  year: Joi.number().min(4),
+  url: Joi.string().min(3)
+});
 
-export { bodyCreateAlbumValidator, createAlbumValidators };
+export { validator, bodyCreateValidator, bodyUpdateValidator };
