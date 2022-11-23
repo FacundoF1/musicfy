@@ -5,10 +5,9 @@ const omitExtraData = ({ ...error } = {}) => {
   return { ...error, errors };
 };
 
-function TestTools(services) {
+function TestTools(_) {
   const mockImplementation = (name = '', fn: never | any) => {
     try {
-      // const [service, fnName] = name.split('.');
       const mock = jest.spyOn(fn, name);
       mock.mockImplementation(fn);
       return mock;

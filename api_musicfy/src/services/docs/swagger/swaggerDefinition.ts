@@ -150,6 +150,28 @@ export default {
               default: 'active',
               $ref: '#/components/schemas/StatusModel'
             }
+          },
+          {
+            name: 'page',
+            in: 'query',
+            description: 'Page values that need to be considered for filter',
+            required: false,
+            explode: true,
+            schema: {
+              type: 'number',
+              default: 0
+            }
+          },
+          {
+            name: 'limit',
+            in: 'query',
+            description: 'Limit values that need to be considered for filter',
+            required: false,
+            explode: true,
+            schema: {
+              type: 'number',
+              default: 3
+            }
           }
         ],
         responses: {

@@ -9,7 +9,7 @@ const options = {
     validatorUrl: null
   },
   swaggerDefinition: configSwaggerJsdoc,
-  apis: ['../../../apis/album/album.routes']
+  apis: ['@apis/album/album.routes']
 };
 
 const specs = swaggerJsdoc(options);
