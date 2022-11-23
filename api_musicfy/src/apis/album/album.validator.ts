@@ -6,7 +6,7 @@ const validator = createValidator();
 const bodyCreateValidator = Joi.object({
   artistId: Joi.string().min(5).required(),
   name: Joi.string().min(3).required(),
-  year: Joi.number().min(4).required(),
+  year: Joi.number().min(4).greater(2009).less(2021).required(),
   url: Joi.string().min(3).required()
 });
 
