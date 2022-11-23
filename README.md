@@ -4,6 +4,10 @@ _App CRUD Module album in NodeJs._
 _API RESTFUL: api_musicfy_
 _APP WEB: web_musicfy_
 
+|      Docs Swagger       | Test Integration Postman |       App Web       |
+| :---------------------: | :----------------------: | :-----------------: |
+| ![](./imgs/swagger.png) | ![](./imgs/postman.png)  | ![](./imgs/web.png) |
+
 ## Comenzando 🚀
 
 _Estas instrucciones te permitirán obtener una copia del proyecto en funcionamiento en tu máquina local para propósitos de desarrollo y pruebas._
