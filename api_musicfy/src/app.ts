@@ -6,7 +6,6 @@ import { errorHandler } from '@middlewares/index';
 
 import endpoints from '@routes/endpoints';
 import swaggerDoc from '@services/docs/swagger/controller';
-var bodyParser = require('body-parser');
 
 const app = express();
 app.use(logger('dev', {}));

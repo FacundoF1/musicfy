@@ -1,5 +1,3 @@
-// @Vendors
-
 // @Modules
 import albumModel from './album.model';
 import { Request, Response } from 'express';
@@ -24,25 +22,21 @@ class CreateAlbum {
   }
 
   async handleRequest() {
-    const { body, file } = this._req;
-    const pathId = file?.filename;
-    const pathUrlAudio = file?.path;
-
     try {
+      const { body } = this._req;
+      const status = 'active';
       const data = albumDto({
         ...body,
-        pathId,
-        pathUrlAudio,
-        status: 'active'
+        status
       });
 
       await albumModel.getAlbumForCreation({
         artistId: body.artistId,
         name: body.name,
-        status: 'active'
+        status
       });
 
-      await albumModel.createAlbum<AlbumInterface>({ ...data });
+      await albumModel.createAlbum<AlbumInterface>(data);
 
       return this._res.status(201).end();
     } catch (error) {
@@ -147,6 +141,7 @@ class DeleteAlbum {
     }
   }
 }
+
 @countInstances
 class UpdateAlbum {
   private _req: Request;
@@ -175,7 +170,7 @@ class UpdateAlbum {
 
       await albumModel.updateAlbum({ _id: body._id }, newData);
 
-      return this._res.sendStatus(204).end();
+      return this._res.status(204).end();
     } catch (error) {
       this._next(error);
     }

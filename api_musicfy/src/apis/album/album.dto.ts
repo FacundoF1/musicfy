@@ -9,12 +9,7 @@ const albumDto = (
   const response: AlbumInterface | any = validateAttr('name', resource.name)
     .validateAttr('year', resource.year)
     .validateAttr('url', resource.url)
-    .validateAttr(
-      'pathId',
-      resource?.pathId && resource?.pathId.replace('.mp3', '')
-    )
     .validateAttr('artistId', resource.artistId)
-    .validateAttr('pathUrlAudio', resource.pathUrlAudio)
     .validateAttr('status', resource.status)
     .validateAttr('_id', resource._id)
     .toObject();

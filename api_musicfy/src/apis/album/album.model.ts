@@ -33,7 +33,9 @@ export default {
       );
 
       if (response.length >= 20 || existAlbum) {
-        throw new createError.Forbidden({ detail: 'Album already createred' });
+        throw existAlbum
+          ? new createError.Forbidden({ detail: 'Album already createred' })
+          : new createError.Forbidden({ detail: 'Maximum albums created' });
       }
 
       return true;

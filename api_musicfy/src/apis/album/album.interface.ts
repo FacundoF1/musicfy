@@ -7,9 +7,7 @@ interface AlbumInterface {
   name: string;
   year: number;
   url: string;
-  pathId?: string;
   artistId?: string;
-  pathUrlAudio?: string;
   status?: statusInterface;
 }
 

@@ -4,12 +4,16 @@ import { app } from '@app';
 import { TestTool } from '@utils/index';
 import albumDao from './album.dao';
 import albumModel from './album.model';
-import { CreateAlbum, DeleteAlbum, GetAlbumBy } from './album.controller';
+import {
+  CreateAlbum,
+  DeleteAlbum,
+  GetAlbumBy,
+  UpdateAlbum
+} from './album.controller';
 import { errors } from '@utils/errors.common';
 const createError = errors(':: Utils Validators ::');
 
 jest.mock('./album.dao');
-jest.mock('../../middlewares/streams');
 
 const testTool = TestTool(albumDao);
 
@@ -53,7 +57,7 @@ describe('Album', () => {
     });
 
     test('400: post album. Validators return error', async () => {
-      const response = await request(app)
+      await request(app)
         .post(`/albums`)
         .send({
           name: 'resource',
@@ -84,7 +88,7 @@ describe('Album', () => {
       expect(next).toHaveBeenCalledWith(error);
     });
 
-    test('403: create album. Return error Forbidden', async () => {
+    test('403: create album. Return error Forbidden Exist Album', async () => {
       const req = testTool.mockRequest({
         name: 'test.Forbidden',
         year: 'resource',
@@ -100,6 +104,37 @@ describe('Album', () => {
 
       const error = new createError.Forbidden({
         detail: 'Album already createred'
+      });
+
+      expect(next).toHaveBeenCalledWith(error);
+    });
+
+    test('403: create album. Return error Forbidden Max Album', async () => {
+      await request(app)
+        .post(`/albums`)
+        .send({
+          artistId: 'testMaxAlbum',
+          name: 'resource',
+          year: 2023,
+          url: 'resource'
+        })
+        .expect(403);
+
+      const req = testTool.mockRequest({
+        artistId: 'testMaxAlbum',
+        name: 'resource',
+        year: 2023,
+        url: 'resource'
+      });
+      const res = testTool.mockResponse();
+      const next = testTool.mockNext(
+        new createError.Forbidden({ detail: 'Maximum albums created' })
+      );
+
+      await new CreateAlbum(req, res, next).handleRequest();
+
+      const error = new createError.Forbidden({
+        detail: 'Maximum albums created'
       });
 
       expect(next).toHaveBeenCalledWith(error);
@@ -147,6 +182,10 @@ describe('Album', () => {
       });
       expect(next).toHaveBeenCalledWith(error);
     });
+
+    test('400: Get album', async () => {
+      await request(app).get(`/albums/und`).expect(400);
+    });
   });
 
   describe('Read All', () => {
@@ -165,6 +204,21 @@ describe('Album', () => {
 
     test('200: get albums', async () => {
       const response = await request(app).get(`/albums`).expect(200);
+
+      expect(response).toHaveProperty('body', [
+        {
+          name: 'sin igual',
+          year: '2023',
+          url: 'http://www.google.com',
+          _id: 'testDb'
+        }
+      ]);
+    });
+
+    test('200: get albums status inactive', async () => {
+      const response = await request(app)
+        .get(`/albums?status=inactive`)
+        .expect(200);
 
       expect(response).toHaveProperty('body', [
         {
@@ -210,12 +264,29 @@ describe('Album', () => {
     });
 
     test('400: update album', async () => {
-      const response = await request(app)
+      await request(app)
         .put(`/albums`)
         .send({
           year: 2028
         })
         .expect(400);
+    });
+
+    test('404: update album', async () => {
+      const req = testTool.mockRequest({ _id: 'teError', year: 2045 });
+      const res = testTool.mockResponse();
+      const next = testTool.mockNext(
+        new createError.UpdateError({
+          detail: 'Album'
+        })
+      );
+
+      await new UpdateAlbum(req, res, next).handleRequest();
+
+      const error = new createError.UpdateError({
+        detail: 'Album'
+      });
+      expect(next).toHaveBeenCalledWith(error);
     });
   });
 
@@ -250,11 +321,22 @@ describe('Album', () => {
 
       expect(next).toHaveBeenCalledWith(error);
     });
+
+    test('400: delete album', async () => {
+      await request(app).delete(`/albums/und`).expect(400);
+    });
   });
 
-  describe('Album Model', () => {
+  describe('Model', () => {
     test('getAlbums', async () => {
       const getAlbums = await albumModel.getAlbums(1, 1, {});
+      expect(getAlbums).toBe(null);
+    });
+
+    test('getAlbums status', async () => {
+      const getAlbums = await albumModel.getAlbums(1, 1, {
+        status: 'inactive'
+      });
       expect(getAlbums).toBe(null);
     });
 
