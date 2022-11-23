@@ -1,3 +1,12 @@
+# [0.3.0](https://github.com/FacundoF1/musicfy/compare/v0.2.0...v0.3.0) (2022-11-23)
+
+
+### Features
+
+* add img readme ([3ce47d6](https://github.com/FacundoF1/musicfy/commit/3ce47d66ffe7ed6de4168fb0f488c63020428ab1))
+
+
+
 # [0.2.0](https://github.com/FacundoF1/musicfy/compare/v0.1.0...v0.2.0) (2022-11-23)
 
 
