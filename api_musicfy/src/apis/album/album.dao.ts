@@ -56,7 +56,7 @@ class ConnectionNeDBDao {
     return new Promise((resolve, reject) =>
       this.collection.insert(data, (err: any, docs: any) => {
         if (err || docs.length === 0) {
-          const error = new createError.CreateError({});
+          const error = new createError.CreateError({ detail: 'Album' });
           return reject(err || error);
         }
         return resolve(docs[0]);

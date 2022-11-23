@@ -327,7 +327,7 @@ describe('Album', () => {
     });
   });
 
-  describe('Album Model', () => {
+  describe('Model', () => {
     test('getAlbums', async () => {
       const getAlbums = await albumModel.getAlbums(1, 1, {});
       expect(getAlbums).toBe(null);
