@@ -17,7 +17,7 @@
 							"  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).getFullYear();",
 							"}",
 							"",
-							"const yearRandon = randomDate(new Date(2012, 0, 1), new Date());",
+							"const yearRandon = randomDate(new Date(2010, 0, 1), new Date(2021, 12, 31));",
 							"pm.collectionVariables.set('year', yearRandon);",
 							"pm.collectionVariables.set('name', `pmTest${yearRandon}`);",
 							""
@@ -229,18 +229,19 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"const response = pm.response.json();",
+							"",
 							"const responseSchema = {",
 							"    type: 'object',",
-							"    items: {",
+							"    items: [{",
 							"        name: { type: 'string' }, // \"sin iguals\",",
 							"        year: { type: 'number' }, // 2021,",
 							"        url: { type: 'string' }, // \"http://www.google.com\"",
 							"        _id: { type: 'string' },",
-							"    },",
+							"    }],",
 							"    required: [\"name\",\"year\",\"url\",\"_id\"]",
 							"};",
 							"",
-							"const response = pm.response.json();",
 							"",
 							"pm.test(\"200: Albums\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -292,14 +293,9 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"const response = pm.response.json();",
 							"",
 							"pm.test(\"204: Albums\", function () {",
 							"    pm.response.to.have.status(204);",
-							"});",
-							"",
-							"pm.test(\"Validate responseSchema\", function () {",
-							"    pm.response.to.have.jsonSchema('');",
 							"});",
 							"",
 							"postman.setNextRequest('Album');"
@@ -368,6 +364,20 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "year",
+			"value": ""
+		},
+		{
+			"key": "name",
+			"value": ""
+		},
+		{
+			"key": "_id",
+			"value": ""
 		}
 	]
 }
