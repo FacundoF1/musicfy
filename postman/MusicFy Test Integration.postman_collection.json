@@ -1,0 +1,373 @@
+{
+	"info": {
+		"_postman_id": "4e172686-9b98-4cf8-a2ab-bbc16b79d135",
+		"name": "MusicFy Test Integration",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2888809"
+	},
+	"item": [
+		{
+			"name": "Album",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function randomDate(start, end) {",
+							"  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())).getFullYear();",
+							"}",
+							"",
+							"const yearRandon = randomDate(new Date(2012, 0, 1), new Date());",
+							"pm.collectionVariables.set('year', yearRandon);",
+							"pm.collectionVariables.set('name', `pmTest${yearRandon}`);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.text();",
+							"",
+							"pm.test(\"201: Create album\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Validate responseSchema\", function () {",
+							"    pm.expect(response).to.equal('');",
+							"});",
+							"",
+							"postman.setNextRequest('Albums');",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"artistId\": \"acc-testPostman2022\",\n    \"name\": \"{{name}}\",\n    \"year\": {{year}},\n    \"url\": \"https://www.dynamicdevs.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/albums",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"albums"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Albums",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseSchema = {",
+							"    type: 'array',",
+							"    items: [{",
+							"        name: { type: 'string' }, // \"sin iguals\",",
+							"        year: { type: 'number' }, // 2021,",
+							"        url: { type: 'string' }, // \"http://www.google.com\"",
+							"        _id: { type: 'string' },",
+							"    }],",
+							"    required: [\"name\",\"year\",\"url\",\"_id\"]",
+							"};",
+							"",
+							"const response = pm.response.json();",
+							"",
+							"pm.test(\"200: Albums\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate responseSchema\", function () {",
+							"    pm.response.to.have.jsonSchema(responseSchema);",
+							"});",
+							"pm.collectionVariables.set('_id', response[0]._id);",
+							"postman.setNextRequest('Albums with filters');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/albums",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"albums"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "inactive",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Se obtiene todos los usuarios de la base de datos, obteniendo los datos menos el password."
+			},
+			"response": []
+		},
+		{
+			"name": "Albums with filters",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.request.addQueryParams(\"status=inactive\");"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseSchema = {",
+							"    type: 'array',",
+							"    items: [{",
+							"        name: { type: 'string' }, // \"sin iguals\",",
+							"        year: { type: 'number' }, // 2021,",
+							"        url: { type: 'string' }, // \"http://www.google.com\"",
+							"        _id: { type: 'string' },",
+							"    }],",
+							"    required: [\"name\",\"year\",\"url\",\"_id\"]",
+							"};",
+							"",
+							"const response = pm.response.json();",
+							"",
+							"pm.test(\"200: Albums\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate responseSchema\", function () {",
+							"    pm.response.to.have.jsonSchema(responseSchema);",
+							"});",
+							"",
+							"postman.setNextRequest('Album Id');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:3000/albums",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"albums"
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "inactive",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Se obtiene todos los usuarios de la base de datos, obteniendo los datos menos el password."
+			},
+			"response": []
+		},
+		{
+			"name": "Album Id",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseSchema = {",
+							"    type: 'object',",
+							"    items: {",
+							"        name: { type: 'string' }, // \"sin iguals\",",
+							"        year: { type: 'number' }, // 2021,",
+							"        url: { type: 'string' }, // \"http://www.google.com\"",
+							"        _id: { type: 'string' },",
+							"    },",
+							"    required: [\"name\",\"year\",\"url\",\"_id\"]",
+							"};",
+							"",
+							"const response = pm.response.json();",
+							"",
+							"pm.test(\"200: Albums\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate responseSchema\", function () {",
+							"    pm.response.to.have.jsonSchema(responseSchema);",
+							"});",
+							"",
+							"postman.setNextRequest('Album');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "file",
+					"file": {
+						"src": ""
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/albums/{{_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"albums",
+						"{{_id}}"
+					]
+				},
+				"description": "Se obtiene todos los usuarios de la base de datos, obteniendo los datos menos el password."
+			},
+			"response": []
+		},
+		{
+			"name": "Album",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();",
+							"",
+							"pm.test(\"204: Albums\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"pm.test(\"Validate responseSchema\", function () {",
+							"    pm.response.to.have.jsonSchema('');",
+							"});",
+							"",
+							"postman.setNextRequest('Album');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"year\": 2027,\n    \"_id\": \"{{_id}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/albums",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"albums"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Album",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"204: Delete Album\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							"",
+							"postman.setNextRequest('SystemInfo');"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/albums/{{_id}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"albums",
+						"{{_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

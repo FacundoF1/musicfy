@@ -6,8 +6,8 @@
   "email": "facundo.ferrarif@gmail.com",
   "scripts": {
     "build": "babel src --extensions \".ts,.js\" --out-dir dist --copy-files",
-    "prestart": "build-server",
-    "start": "node ./server/bin/www",
+    "prestart": "yarn build",
+    "start": "node ./dist/bin/www",
     "dev": "env=dev ts-node-dev -r tsconfig-paths/register --respawn --ignore-watch node_modules ./src/bin/www",
     "test": "NODE_ENV=test jest",
     "build-server": "babel -d ./dist ./server -s"
