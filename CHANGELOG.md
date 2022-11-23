@@ -1,4 +1,13 @@
-# 0.1.0 (2022-11-23)
+# [0.2.0](https://github.com/FacundoF1/musicfy/compare/v0.1.0...v0.2.0) (2022-11-23)
+
+
+### Features
+
+* update release yaml ([ffe0b8e](https://github.com/FacundoF1/musicfy/commit/ffe0b8e59e406fd2e521f494e81d87382a7b5b85))
+
+
+
+# [0.1.0](https://github.com/FacundoF1/musicfy/compare/e6cde87c8a677d08ca7f8802f9f71e6740499345...v0.1.0) (2022-11-23)
 
 
 ### Features
