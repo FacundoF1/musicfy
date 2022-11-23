@@ -33,7 +33,7 @@ describe('Album', () => {
     test('201: create album. Return without content', async () => {
       const req = testTool.mockRequest({
         name: 'resource',
-        year: 'resource',
+        year: 2013,
         url: 'resource',
         artistId: 'resource'
       });
@@ -49,7 +49,7 @@ describe('Album', () => {
         .post(`/albums`)
         .send({
           name: 'resource',
-          year: 2022,
+          year: 2013,
           url: 'resource',
           artistId: 'resource'
         })
@@ -61,7 +61,7 @@ describe('Album', () => {
         .post(`/albums`)
         .send({
           name: 'resource',
-          year: 'resource',
+          year: 2050,
           url: 'resource'
         })
         .expect(400);
@@ -115,7 +115,7 @@ describe('Album', () => {
         .send({
           artistId: 'testMaxAlbum',
           name: 'resource',
-          year: 2023,
+          year: 2013,
           url: 'resource'
         })
         .expect(403);
@@ -123,7 +123,7 @@ describe('Album', () => {
       const req = testTool.mockRequest({
         artistId: 'testMaxAlbum',
         name: 'resource',
-        year: 2023,
+        year: 2013,
         url: 'resource'
       });
       const res = testTool.mockResponse();
