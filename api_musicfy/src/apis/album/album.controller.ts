@@ -62,7 +62,7 @@ class GetAlbums {
       const { page, limit } = query;
 
       const res_page = Number(page) || 0;
-      const res_limit = Number(limit) || 3;
+      const res_limit = Number(limit) || 20;
 
       const filterAlbum = albumDto(query, false);
       const filters = Object.keys(filterAlbum).length
@@ -141,7 +141,6 @@ class DeleteAlbum {
     }
   }
 }
-
 @countInstances
 class UpdateAlbum {
   private _req: Request;

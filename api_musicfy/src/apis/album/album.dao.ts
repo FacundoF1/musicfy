@@ -71,7 +71,7 @@ class ConnectionNeDBDao {
         { $set: dataDb },
         {},
         (err: any, docs: any) => {
-          if (err || docs || docs.length === 0) {
+          if (err || !docs || docs.length === 0) {
             const error = new createError.UpdateError({ detail: 'Album' });
             return reject(err || error);
           }

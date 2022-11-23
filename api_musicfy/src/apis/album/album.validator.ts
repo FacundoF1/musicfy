@@ -11,14 +11,14 @@ const bodyCreateValidator = Joi.object({
 });
 
 const bodyUpdateValidator = Joi.object({
-  _id: Joi.string().min(5).required(),
+  _id: Joi.required(),
   name: Joi.string().min(3),
   year: Joi.number().min(4),
   url: Joi.string().min(3)
 });
 
 const paramIdValidator = Joi.object({
-  _id: Joi.string().min(4).required()
+  _id: Joi.string().min(2).required()
 });
 
 export {
