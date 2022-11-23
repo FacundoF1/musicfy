@@ -18,7 +18,7 @@ const bodyUpdateValidator = Joi.object({
 });
 
 const paramIdValidator = Joi.object({
-  _id: Joi.string().required()
+  _id: Joi.string().min(2).required()
 });
 
 export {

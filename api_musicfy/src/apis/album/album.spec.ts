@@ -183,8 +183,8 @@ describe('Album', () => {
       expect(next).toHaveBeenCalledWith(error);
     });
 
-    test('400: Get album', async () => {
-      await request(app).get(`/albums/und`).expect(400);
+    test('404: Get album', async () => {
+      await request(app).get(`/albums/und`).expect(404);
     });
   });
 
@@ -323,17 +323,17 @@ describe('Album', () => {
     });
 
     test('400: delete album', async () => {
-      await request(app).delete(`/albums/und`).expect(400);
+      await request(app).delete(`/albums/1`).expect(400);
     });
   });
 
   describe('Model', () => {
     test('getAlbums', async () => {
-      const getAlbums = await albumModel.getAlbums(1, 1, {});
+      const getAlbums = await albumModel.getAlbums(12, 1, {});
       expect(getAlbums).toBe(null);
     });
 
-    test('getAlbums status', async () => {
+    test('status getAlbums', async () => {
       const getAlbums = await albumModel.getAlbums(1, 1, {
         status: 'inactive'
       });
