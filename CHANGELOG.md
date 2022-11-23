@@ -1,3 +1,12 @@
+# [0.4.0](https://github.com/FacundoF1/musicfy/compare/v0.3.0...v0.4.0) (2022-11-23)
+
+
+### Features
+
+* update postman ([#14](https://github.com/FacundoF1/musicfy/issues/14)) ([82707b6](https://github.com/FacundoF1/musicfy/commit/82707b6843fa14bf63b7132a1c82f0b7cb58f13f))
+
+
+
 # [0.3.0](https://github.com/FacundoF1/musicfy/compare/v0.2.0...v0.3.0) (2022-11-23)
 
 
