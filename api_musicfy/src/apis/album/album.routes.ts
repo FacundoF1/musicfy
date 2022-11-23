@@ -14,7 +14,8 @@ import {
 import {
   validator,
   bodyCreateValidator,
-  bodyUpdateValidator
+  bodyUpdateValidator,
+  paramIdValidator
 } from './album.validator';
 
 const deleteAlbumController = async (req: Request, res: Response, next: any) =>
@@ -29,9 +30,14 @@ const getAlbumByController = async (req: Request, res: Response, next: any) =>
   await new GetAlbumBy(req, res, next).handleRequest();
 
 router.get('/', getAlbumsController);
-router.get('/:_id?', getAlbumByController);
 router.post('/', validator.body(bodyCreateValidator), createAlbumController);
 router.put('/', validator.body(bodyUpdateValidator), updateAlbumController);
-router.delete('/:_id', deleteAlbumController);
+
+router.get('/:_id?', validator.params(paramIdValidator), getAlbumByController);
+router.delete(
+  '/:_id',
+  validator.params(paramIdValidator),
+  deleteAlbumController
+);
 
 export default router;

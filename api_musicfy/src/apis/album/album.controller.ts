@@ -175,7 +175,7 @@ class UpdateAlbum {
 
       await albumModel.updateAlbum({ _id: body._id }, newData);
 
-      return this._res.sendStatus(204).end();
+      return this._res.status(204).end();
     } catch (error) {
       this._next(error);
     }

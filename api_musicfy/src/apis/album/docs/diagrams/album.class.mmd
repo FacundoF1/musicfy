@@ -7,14 +7,11 @@ classDiagram
     }
     class Album { 
         -String id
-        -String pathId
-        -String pathUrlAudio
         -Enum status
         +String artistId
         +String name
         +String year
         +String url
         -CreateAlbum()
-        -writeFileStream()
+        -getAlbumForCreation()
     }
-            

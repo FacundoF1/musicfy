@@ -44,6 +44,7 @@ class ConnectionNeDBDao {
         }
       ];
     }
+    if (data?.artistId === 'testMaxAlbum') return [...Array(20).keys()];
     return null;
   };
 
@@ -65,6 +66,9 @@ class ConnectionNeDBDao {
       ];
     if (dataDb?._id === 'errorTest')
       throw new createError.DeleteError({ detail: 'Album' });
+
+    if (dataDb?._id === 'teError')
+      throw new createError.UpdateError({ detail: 'Album' });
 
     return null;
   };
