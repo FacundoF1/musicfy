@@ -1,0 +1,62 @@
+<div class="container">
+  <h3 mat-dialog-title>Issue id: {{data.id}}</h3>
+
+  <form class="mat-dialog-content" (ngSubmit)="submit" #formControl="ngForm">
+    <!--Textarea for demo purposes-->
+    <div class="form">
+      <mat-form-field color="accent">
+        <textarea
+          matInput
+          #input
+          class="form-control"
+          placeholder="Name album"
+          [(ngModel)]="data.name"
+          name="name"
+          minlength="3"
+        ></textarea>
+        <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+      </mat-form-field>
+    </div>
+
+    <!--Contains mat-hint for characters count and has maxLengt set-->
+    <div class="form">
+      <mat-form-field color="accent">
+        <input
+          matInput
+          type="number"
+          maxlength="4"
+          minlength="4"
+          placeholder="year"
+          [(ngModel)]="data.year"
+          name="year"
+        />
+      </mat-form-field>
+    </div>
+
+    <div class="form">
+      <mat-form-field color="accent">
+        <input
+          matInput
+          placeholder="Url"
+          type="url"
+          minlength="5"
+          [(ngModel)]="data.url"
+          name="url"
+        />
+      </mat-form-field>
+    </div>
+
+    <div mat-dialog-actions>
+      <button
+        mat-button
+        [type]="submit"
+        [disabled]="!formControl.valid"
+        [mat-dialog-close]="1"
+        (click)="stopEdit()"
+      >
+        Save
+      </button>
+      <button mat-button (click)="onNoClick()" tabindex="-1">Cancel</button>
+    </div>
+  </form>
+</div>
