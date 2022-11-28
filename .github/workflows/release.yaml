@@ -28,15 +28,9 @@ jobs:
           release_name: ${{ steps.changelog.outputs.tag }}
           body: ${{ steps.changelog.outputs.clean_changelog }}
 
-      - name: Code Coverage Report
-        uses: actions/checkout@v3
+      - uses: devmasx/coverage-check-action@v1.2.0
         with:
-          filename: coverage/**/coverage.cobertura.xml
-          badge: true
-          fail_below_min: true
-          format: markdown
-          hide_branch_rate: false
-          hide_complexity: true
-          indicators: true
-          output: both
-          thresholds: "60 90"
+          type: simplecov
+          result_path: coverage/.coverage-final.json
+          min_coverage: 90
+          token: ${{ github.token }}
