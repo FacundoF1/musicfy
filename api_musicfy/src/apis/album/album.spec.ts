@@ -12,6 +12,7 @@ import {
 } from './album.controller';
 import { errors } from '@utils/errors.common';
 const createError = errors(':: Utils Validators ::');
+import { validator } from './album.validator';
 
 jest.mock('./album.dao');
 
@@ -25,7 +26,13 @@ describe('Album', () => {
 
   describe('Create', () => {
     test('Unit: db create', async () => {
-      const result = await albumDao.create({ _id: 1 });
+      const result = await albumDao.create({
+        name: 'resource',
+        year: 2013,
+        url: 'resource',
+        artistId: 'resource',
+        status: 'active'
+      });
 
       expect(result).toEqual(true);
     });
@@ -35,7 +42,8 @@ describe('Album', () => {
         name: 'resource',
         year: 2013,
         url: 'resource',
-        artistId: 'resource'
+        artistId: 'resource',
+        status: 'active'
       });
       const res = testTool.mockResponse();
 
@@ -230,8 +238,8 @@ describe('Album', () => {
       ]);
     });
 
-    test('500: get albums. Return error server', async () => {
-      await request(app).get(`/albums?page=1`).expect(500);
+    test('404: get albums. Return error data not found', async () => {
+      await request(app).get(`/albums?page=2`).expect(404);
     });
   });
 
@@ -329,32 +337,41 @@ describe('Album', () => {
 
   describe('Model', () => {
     test('getAlbums', async () => {
-      const getAlbums = await albumModel.getAlbums(12, 1, {});
-      expect(getAlbums).toBe(null);
+      const getAlbums = await albumModel.getAlbums(0, 1, {});
+      expect(getAlbums).toEqual([
+        {
+          name: 'sin igual',
+          year: '2023',
+          url: 'http://www.google.com',
+          _id: 'testDb'
+        }
+      ]);
     });
 
-    test('status getAlbums', async () => {
-      const getAlbums = await albumModel.getAlbums(1, 1, {
-        status: 'inactive'
-      });
-      expect(getAlbums).toBe(null);
-    });
-
-    test('getAlbum', async () => {
-      const getAlbum = await albumModel.getAlbum('data');
-      expect(getAlbum).toBe(null);
-    });
-    test('createAlbum', async () => {
-      const createAlbum = await albumModel.createAlbum('data');
-      expect(createAlbum).toBe(null);
-    });
     test('updateAlbum', async () => {
       const updateAlbum = await albumModel.updateAlbum('id', {});
       expect(updateAlbum).toBe(null);
     });
-    test('deleteAlbum', async () => {
-      const deleteAlbum = await albumModel.deleteAlbum('id');
-      expect(deleteAlbum).toBe(null);
+
+    test('error deleteAlbum', async () => {
+      await expect(albumModel.deleteAlbum(null)).rejects.toEqual(
+        new createError.DeleteError({ detail: 'Album' })
+      );
     });
+
+    test('resolve deleteAlbum', async () => {
+      await expect(albumModel.deleteAlbum(1)).resolves.toEqual(true);
+    });
+
+    test('createAlbum', async () => {
+      await expect(albumModel.createAlbum(null)).rejects.toEqual(
+        new createError.CreateError({ detail: 'Album' })
+      );
+    });
+  });
+
+  describe('Validators', () => {
+    expect(validator).toBeDefined();
+    // .toHavePrtooperty(['body']);
   });
 });

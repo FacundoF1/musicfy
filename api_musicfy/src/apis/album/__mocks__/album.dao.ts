@@ -1,17 +1,18 @@
 import { errors } from '@utils/errors.common';
 const createError = errors(':: Album DAO ::');
+
 class ConnectionNeDBDao {
   getAlls = async <T>(page: any, limit: any) => {
-    return page === 0
-      ? [
-          {
-            name: 'sin igual',
-            year: '2023',
-            url: 'http://www.google.com',
-            _id: 'testDb'
-          }
-        ]
-      : null;
+    if (page === 0)
+      return [
+        {
+          name: 'sin igual',
+          year: '2023',
+          url: 'http://www.google.com',
+          _id: 'testDb'
+        }
+      ];
+    return Promise.reject(new createError.DataNotFound({ name: 'Album' }));
   };
 
   getById = async <T>(id: any) => {
@@ -45,11 +46,13 @@ class ConnectionNeDBDao {
       ];
     }
     if (data?.artistId === 'testMaxAlbum') return [...Array(20).keys()];
-    return null;
+
+    throw new createError.DataNotFound({ name: 'Album' });
   };
 
   create = async <T>(data: any) => {
-    return data?._id ? true : null;
+    if (data) return true;
+    return Promise.reject(new createError.CreateError({ detail: 'Album' }));
   };
 
   update = async <T>(dataDb: any, data?: object | any) => {
@@ -74,7 +77,8 @@ class ConnectionNeDBDao {
   };
 
   delete = async <T>(id: any) => {
-    return null;
+    if (id) return true;
+    return Promise.reject(new createError.DeleteError({ detail: 'Album' }));
   };
 }
 
