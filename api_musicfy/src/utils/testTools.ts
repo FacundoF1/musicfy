@@ -64,6 +64,7 @@ function TestTools(_) {
     mockResponse: (): any => {
       const res = {};
       res['status'] = jest.fn().mockReturnValue(res);
+      res['statusCode'] = jest.fn().mockReturnValue(res);
       res['json'] = jest.fn().mockReturnValue(res);
       res['send'] = jest.fn().mockReturnValue(res);
       res['end'] = jest.fn().mockReturnValue(res);

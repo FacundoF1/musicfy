@@ -44,6 +44,7 @@ class CreateAlbum {
     }
   }
 }
+
 @countInstances
 class GetAlbums {
   private _req: Request;
@@ -78,6 +79,7 @@ class GetAlbums {
     }
   }
 }
+
 @countInstances
 class GetAlbumBy {
   private _req: Request;
@@ -97,8 +99,6 @@ class GetAlbumBy {
       const data = albumDto({ status: 'active', ...params, ...query }, false);
       const result = await albumModel.getAlbum<AlbumInterface>(data);
 
-      if (!result) throw new createError.DataNotFound({ name: 'Album' });
-
       const album = albumDto(
         {
           _id: result._id,
@@ -115,6 +115,7 @@ class GetAlbumBy {
     }
   }
 }
+
 @countInstances
 class DeleteAlbum {
   private _req: Request;
@@ -141,6 +142,7 @@ class DeleteAlbum {
     }
   }
 }
+
 @countInstances
 class UpdateAlbum {
   private _req: Request;
